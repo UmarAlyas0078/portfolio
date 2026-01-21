@@ -1,7 +1,7 @@
 <script setup>
 const downloadCV = () => {
   // Replace with your actual CV link
-  window.open('/UmarAlyasResume.pdf', '_blank')
+  window.open('/portfolio/UmarAlyasResume.pdf', '_blank')
 }
 
 const openGithub = () => {

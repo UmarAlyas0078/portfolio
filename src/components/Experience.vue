@@ -195,7 +195,7 @@ onMounted(() => {
     <!-- Download CV Button -->
     <div class="text-center mt-12">
       <a
-        href="/UmarAlyasResume.pdf"
+        href="/portfolio/UmarAlyasResume.pdf"
         download
         class="inline-flex items-center gap-2 btn-primary"
       >
