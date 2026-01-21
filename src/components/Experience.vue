@@ -1,20 +1,23 @@
 <script setup>
+import { ref, onMounted } from 'vue'
+
 const experiences = [
   {
     id: 1,
-    role: 'Android Developer',
+    role: 'Senior Android Developer',
     company: 'Joblogic Service Management Software',
     location: 'Lahore, Punjab, Pakistan',
     period: 'Apr 2023 - Present',
     type: 'Full-time',
-    description: 'At Joblogic, I work on the Joblogic Mobile app, which provides a real-time interface between the Joblogic Service Management System and engineers\' mobile devices. The app enables engineers to receive job information, capture time sheets, notes, parts, expenses, and more, eliminating the need for paper job sheets and reducing office visits.',
+    description: 'Expanded and sustained Android application for Joblogic, a field service management platform used by engineers and office staff. Designed modular architecture using MVVM and Clean Architecture, increasing scalability and reducing technical debt.',
     achievements: [
-      'Developed new features for Joblogic Mobile app serving field engineers',
-      'Integrated Flutter features to enhance user experience and functionality',
-      'Created bespoke forms for replacing paperwork (risk assessments, service sheets)',
-      'Implemented real-time interface between Service Management System and mobile devices',
-      'Eliminated paper-based workflows, reducing office visits for engineers',
-      'Fixed critical bugs and enhanced app functionality for improved user experience'
+      'Designed modular architecture using MVVM and Clean Architecture, increasing scalability',
+      'Delivered features including job scheduling, reporting, invoicing, compliance tracking',
+      'Implemented biometric authentication, push notifications, and offline-first support',
+      'Optimized performance, reduced crash rates, and collaborated with cross-functional teams',
+      'Collaborated with international development teams from UK and Vietnam',
+      'Revamped codebase adhering to best practices, reducing technical debt',
+      'Used GitHub Copilot in pair-programming sessions to accelerate development'
     ],
     current: true
   },
@@ -23,7 +26,7 @@ const experiences = [
     role: 'Android Developer',
     company: 'ElementaryLogics',
     location: 'Lahore, Punjab, Pakistan',
-    period: 'Apr 2022 - Mar 2023',
+    period: 'Apr 2022 - Apr 2023',
     type: 'Full-time',
     description: 'Developed and optimized Android applications including Nowatt Lighting, The Pavilion, Pavilion Cafe, and Mela. Utilized Java and Kotlin for feature implementation and performance enhancements. Collaborated with cross-functional teams, conducted code reviews, and mentored junior developers.',
     achievements: [
@@ -55,17 +58,51 @@ const experiences = [
     current: false
   }
 ]
+
+const titleRef = ref(null)
+const experienceVisible = ref(false)
+const experienceRef = ref(null)
+
+onMounted(() => {
+  const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+  }
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        if (entry.target === titleRef.value || entry.target === experienceRef.value) {
+          experienceVisible.value = true
+        }
+      }
+    })
+  }, observerOptions)
+
+  if (titleRef.value) observer.observe(titleRef.value)
+  if (experienceRef.value) observer.observe(experienceRef.value)
+})
 </script>
 
 <template>
   <section id="experience" class="section-container bg-gray-50 dark:bg-gray-800">
-    <h2 class="section-title">Work Experience</h2>
+    <h2 
+      ref="titleRef"
+      :class="['section-title transition-all duration-800 ease-out', experienceVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10']"
+    >
+      Work Experience
+    </h2>
     
-    <p class="text-center text-gray-600 dark:text-gray-400 max-w-2xl mx-auto mb-12">
+    <p 
+      :class="['text-center text-gray-600 dark:text-gray-400 max-w-2xl mx-auto mb-12 transition-all duration-800 delay-200 ease-out', experienceVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10']"
+    >
       My 5-year professional journey in Android development, showcasing growth from Junior Android Developer to experienced mobile developer.
     </p>
 
-    <div class="max-w-4xl mx-auto">
+    <div 
+      ref="experienceRef"
+      class="max-w-4xl mx-auto"
+    >
       <!-- Timeline -->
       <div class="relative">
         <!-- Timeline Line -->
@@ -75,7 +112,8 @@ const experiences = [
         <div
           v-for="(exp, index) in experiences"
           :key="exp.id"
-          class="relative mb-12"
+          :class="['relative mb-12 transition-all duration-700 ease-out', experienceVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10']"
+          :style="{ transitionDelay: experienceVisible ? `${300 + index * 200}ms` : '0ms' }"
         >
           <div
             :class="[

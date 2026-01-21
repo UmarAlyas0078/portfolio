@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 
 const form = ref({
   name: '',
@@ -67,19 +67,55 @@ const handleSubmit = async () => {
     }, 5000)
   }
 }
+
+const titleRef = ref(null)
+const contactVisible = ref(false)
+const contactRef = ref(null)
+
+onMounted(() => {
+  const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+  }
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        if (entry.target === titleRef.value || entry.target === contactRef.value) {
+          contactVisible.value = true
+        }
+      }
+    })
+  }, observerOptions)
+
+  if (titleRef.value) observer.observe(titleRef.value)
+  if (contactRef.value) observer.observe(contactRef.value)
+})
 </script>
 
 <template>
   <section id="contact" class="section-container bg-white dark:bg-gray-900">
-    <h2 class="section-title">Get In Touch</h2>
+    <h2 
+      ref="titleRef"
+      :class="['section-title transition-all duration-800 ease-out', contactVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10']"
+    >
+      Get In Touch
+    </h2>
     
-    <p class="text-center text-gray-600 dark:text-gray-400 max-w-2xl mx-auto mb-12">
+    <p 
+      :class="['text-center text-gray-600 dark:text-gray-400 max-w-2xl mx-auto mb-12 transition-all duration-800 delay-200 ease-out', contactVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10']"
+    >
       I'm always open to discussing new projects, creative ideas, or opportunities to be part of your vision. Feel free to reach out!
     </p>
 
-    <div class="grid lg:grid-cols-2 gap-12 max-w-6xl mx-auto">
+    <div 
+      ref="contactRef"
+      class="grid lg:grid-cols-2 gap-12 max-w-6xl mx-auto"
+    >
       <!-- Contact Information -->
-      <div class="space-y-8">
+      <div 
+        :class="['space-y-8 transition-all duration-800 delay-300 ease-out', contactVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10']"
+      >
         <div>
           <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">
             Contact Information
@@ -137,7 +173,9 @@ const handleSubmit = async () => {
       </div>
 
       <!-- Contact Form -->
-      <div class="card">
+      <div 
+        :class="['card transition-all duration-800 delay-400 ease-out', contactVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-10']"
+      >
         <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">
           Send Me a Message
         </h3>

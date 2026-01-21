@@ -1,4 +1,6 @@
 <script setup>
+import { ref, onMounted } from 'vue'
+
 const projects = [
   {
     id: 1,
@@ -23,15 +25,36 @@ const projects = [
   },
   {
     id: 2,
+    title: 'TradeHero',
+    description: 'An all-in-one mobile app for tradesmen to manage their business on the go. Easily create and manage appointments, quotes, jobs, and invoices. Seamlessly transition between tasks, send professional PDFs, and accept secure payments via Stripe. Perfect for plumbers, electricians, and other field professionals.',
+    technologies: ['Flutter', 'Dart', 'Stripe Payment API', 'PDF Generation', 'REST APIs', 'Getx'],
+    image: '🛠️',
+    github: null,
+    playstore: null,
+    featured: true,
+    company: 'Joblogic',
+    features: [
+      'Appointment Management',
+      'Quote Creation & Management',
+      'Job Tracking',
+      'Invoice Generation',
+      'PDF Export & Sharing',
+      'Stripe Payment Integration',
+      'Professional Business Management',
+      'Field Service Optimization'
+    ]
+  },
+  {
+    id: 3,
     title: 'Ezycapture',
-    description: 'Fast Video to Photo Converter - A Video and Image utility application with more than 90k downloads on Play Store. Extract frames from videos with quick capture, time capture, and advanced automation features.',
+    description: 'Fast Video to Photo Converter - A Video and Image utility application with 100K+ downloads on Google Play. Extract frames from videos instantly or at timed intervals.',
     technologies: ['Java', 'Kotlin', 'XML', 'Video Processing', 'Gallery API'],
     image: '📹',
     github: null,
     playstore: null,
     featured: true,
     company: 'CodesOrbit',
-    downloads: '90k+',
+    downloads: '100K+',
     features: [
       'Quick Capture - Manual frame extraction',
       'Time Capture - Automated interval capture',
@@ -42,7 +65,7 @@ const projects = [
     ]
   },
   {
-    id: 3,
+    id: 4,
     title: 'Mela',
     description: 'A marketplace transforming shopping experiences for people of Pakistan by providing a single platform to browse offers from retailers. Provides huge savings and notifications about latest promotions in desired stores.',
     technologies: ['Java', 'Kotlin', 'XML', 'Geofencing', 'Location Services', 'REST APIs'],
@@ -63,7 +86,7 @@ const projects = [
     ]
   },
   {
-    id: 4,
+    id: 5,
     title: 'The Pavilion',
     description: 'Book The Pavilion for different types of sports for your friends and family with few clicks. Features live booking time slot checking, instant booking, and pre-orders for food & drinks to be served at your arrival.',
     technologies: ['Java', 'Kotlin', 'XML', 'Real-time Booking API', 'SQLite', 'REST APIs'],
@@ -84,7 +107,7 @@ const projects = [
     ]
   },
   {
-    id: 5,
+    id: 6,
     title: 'Nowatt Lighting',
     description: 'Control all connected solar devices with advanced lighting scenarios. Choose from 1 million colors and create custom lighting experiences. Professional solar lighting control for aesthetic, connected, smart, and reliable devices.',
     technologies: ['Java', 'Kotlin', 'XML', 'IoT Integration', 'Bluetooth/WiFi', 'Color API'],
@@ -105,7 +128,7 @@ const projects = [
     ]
   },
   {
-    id: 6,
+    id: 7,
     title: 'Pavilion Cafe',
     description: 'A comprehensive cafe application where customers can customize their orders and add or remove multiple ingredients from special items. Features admin panel with thermal printer integration for order management.',
     technologies: ['Java', 'Kotlin', 'XML', 'Thermal Printer API', 'SQLite', 'REST APIs'],
@@ -126,7 +149,7 @@ const projects = [
     ]
   },
   {
-    id: 7,
+    id: 8,
     title: 'Phone Skope',
     description: 'An exciting new camera app that allows users to take better pictures and videos like a professional photographer. Features 4K camera and live 360° capabilities, making it the best camera app for Android devices.',
     technologies: ['Java', 'Kotlin', 'XML', 'Camera API', 'Camera2 API'],
@@ -147,7 +170,7 @@ const projects = [
     ]
   },
   {
-    id: 8,
+    id: 9,
     title: 'PhoneSkope Editor',
     description: 'A simple Video Editor app that makes your life easy by creating a painless interface that allows you to quickly edit your videos. Built at CodesOrbit with focus on user-friendly video editing capabilities.',
     technologies: ['Java', 'Kotlin', 'XML', 'Coroutines'],
@@ -165,21 +188,59 @@ const projects = [
     ]
   }
 ]
+
+const titleRef = ref(null)
+const projectsVisible = ref(false)
+const projectsRef = ref(null)
+
+onMounted(() => {
+  const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+  }
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        if (entry.target === titleRef.value) {
+          setTimeout(() => { projectsVisible.value = true }, 200)
+        }
+        if (entry.target === projectsRef.value) {
+          projectsVisible.value = true
+        }
+      }
+    })
+  }, observerOptions)
+
+  if (titleRef.value) observer.observe(titleRef.value)
+  if (projectsRef.value) observer.observe(projectsRef.value)
+})
 </script>
 
 <template>
   <section id="projects" class="section-container bg-white dark:bg-gray-900">
-    <h2 class="section-title">Featured Projects</h2>
+    <h2 
+      ref="titleRef"
+      :class="['section-title transition-all duration-800 ease-out', projectsVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10']"
+    >
+      Featured Projects
+    </h2>
     
-    <p class="text-center text-gray-600 dark:text-gray-400 max-w-2xl mx-auto mb-12">
+    <p 
+      :class="['text-center text-gray-600 dark:text-gray-400 max-w-2xl mx-auto mb-12 transition-all duration-800 delay-200 ease-out', projectsVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10']"
+    >
       Here are some of my recent projects that showcase my skills in mobile development. Each project demonstrates different aspects of modern app development.
     </p>
 
-    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+    <div 
+      ref="projectsRef"
+      class="grid md:grid-cols-2 lg:grid-cols-3 gap-8"
+    >
       <div
-        v-for="project in projects"
+        v-for="(project, index) in projects"
         :key="project.id"
-        class="card group"
+        :class="['card group transition-all duration-700 ease-out', projectsVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10']"
+        :style="{ transitionDelay: projectsVisible ? `${300 + index * 100}ms` : '0ms' }"
       >
         <!-- Project Icon/Image -->
         <div class="w-full h-48 bg-gradient-to-br from-primary-400 to-primary-600 rounded-lg flex items-center justify-center mb-4 group-hover:scale-105 transition-transform duration-300">
@@ -270,21 +331,6 @@ const projects = [
           </a>
         </div>
       </div>
-    </div>
-
-    <!-- View More -->
-    <div class="text-center mt-12">
-      <a
-        href="https://github.com/yourusername"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="inline-flex items-center gap-2 btn-primary"
-      >
-        View All Projects on GitHub
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-        </svg>
-      </a>
     </div>
   </section>
 </template>

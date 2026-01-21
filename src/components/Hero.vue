@@ -30,7 +30,7 @@ const scrollToContact = () => {
         </h1>
         
         <h2 class="text-2xl sm:text-3xl md:text-4xl font-semibold text-gray-700 dark:text-gray-300 mb-6">
-          Android & Flutter Developer
+          Senior Android Developer
         </h2>
         
         <p class="text-lg sm:text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto mb-8">

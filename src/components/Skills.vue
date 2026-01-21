@@ -1,4 +1,6 @@
 <script setup>
+import { ref, onMounted } from 'vue'
+
 const skills = [
   {
     category: 'Mobile Development',
@@ -44,14 +46,45 @@ const technologies = [
   { name: 'Git', icon: '📦' },
   { name: 'Material Design', icon: '💎' }
 ]
+
+const titleRef = ref(null)
+const skillsVisible = ref(false)
+const skillsRef = ref(null)
+
+onMounted(() => {
+  const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+  }
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        if (entry.target === titleRef.value || entry.target === skillsRef.value) {
+          skillsVisible.value = true
+        }
+      }
+    })
+  }, observerOptions)
+
+  if (titleRef.value) observer.observe(titleRef.value)
+  if (skillsRef.value) observer.observe(skillsRef.value)
+})
 </script>
 
 <template>
   <section id="skills" class="section-container bg-gray-50 dark:bg-gray-800">
-    <h2 class="section-title">Skills & Technologies</h2>
+    <h2 
+      ref="titleRef"
+      :class="['section-title transition-all duration-800 ease-out', skillsVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10']"
+    >
+      Skills & Technologies
+    </h2>
 
     <!-- Technology Badges -->
-    <div class="flex flex-wrap justify-center gap-4 mb-16">
+    <div 
+      :class="['flex flex-wrap justify-center gap-4 mb-16 transition-all duration-800 delay-200 ease-out', skillsVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10']"
+    >
       <div
         v-for="tech in technologies"
         :key="tech.name"
@@ -63,11 +96,15 @@ const technologies = [
     </div>
 
     <!-- Skill Progress Bars -->
-    <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+    <div 
+      ref="skillsRef"
+      class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto"
+    >
       <div
-        v-for="skillGroup in skills"
+        v-for="(skillGroup, index) in skills"
         :key="skillGroup.category"
-        class="card"
+        :class="['card transition-all duration-700 ease-out', skillsVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10']"
+        :style="{ transitionDelay: skillsVisible ? `${400 + index * 150}ms` : '0ms' }"
       >
         <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-6 text-center">
           {{ skillGroup.category }}

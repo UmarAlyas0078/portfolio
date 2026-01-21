@@ -1,19 +1,62 @@
 <script setup>
+import { ref, onMounted } from 'vue'
+
 const stats = [
   { label: 'Years Experience', value: '5+' },
-  { label: 'Projects Completed', value: '30+' },
+  { label: 'Projects Completed', value: '15+' },
   { label: 'Apps Published', value: '10+' },
-  { label: 'Happy Clients', value: '20+' }
+  { label: 'Happy Clients', value: '10+' }
 ]
+
+const titleRef = ref(null)
+const imageRef = ref(null)
+const contentRef = ref(null)
+const statsRef = ref(null)
+
+const titleVisible = ref(false)
+const imageVisible = ref(false)
+const contentVisible = ref(false)
+const statsVisible = ref(false)
+
+onMounted(() => {
+  const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+  }
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        if (entry.target === titleRef.value) titleVisible.value = true
+        if (entry.target === imageRef.value) imageVisible.value = true
+        if (entry.target === contentRef.value) contentVisible.value = true
+        if (entry.target === statsRef.value) statsVisible.value = true
+      }
+    })
+  }, observerOptions)
+
+  if (titleRef.value) observer.observe(titleRef.value)
+  if (imageRef.value) observer.observe(imageRef.value)
+  if (contentRef.value) observer.observe(contentRef.value)
+  if (statsRef.value) observer.observe(statsRef.value)
+})
 </script>
 
 <template>
   <section id="about" class="section-container bg-white dark:bg-gray-900">
-    <h2 class="section-title">About Me</h2>
+    <h2 
+      ref="titleRef"
+      :class="['section-title transition-all duration-800 ease-out', titleVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10']"
+    >
+      About Me
+    </h2>
     
     <div class="grid md:grid-cols-2 gap-12 items-center">
       <!-- Left: Image/Illustration -->
-      <div class="flex justify-center">
+      <div 
+        ref="imageRef"
+        :class="['flex justify-center transition-all duration-800 delay-200 ease-out', imageVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10']"
+      >
         <div class="relative">
           <div class="w-64 h-64 sm:w-80 sm:h-80 rounded-2xl bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center shadow-2xl">
             <svg class="w-32 h-32 sm:w-40 sm:h-40 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -26,9 +69,12 @@ const stats = [
       </div>
 
       <!-- Right: Content -->
-      <div class="space-y-6">
+      <div 
+        ref="contentRef"
+        :class="['space-y-6 transition-all duration-800 delay-300 ease-out', contentVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-10']"
+      >
         <h3 class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
-          Professional Android & Flutter Developer
+          Senior Android Developer | Mobile Technology Enthusiast
         </h3>
         
         <p class="text-lg text-gray-600 dark:text-gray-400 leading-relaxed">
@@ -72,11 +118,15 @@ const stats = [
     </div>
 
     <!-- Stats Section -->
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mt-16">
+    <div 
+      ref="statsRef"
+      :class="['grid grid-cols-2 md:grid-cols-4 gap-6 mt-16 transition-all duration-800 delay-500 ease-out', statsVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10']"
+    >
       <div
-        v-for="stat in stats"
+        v-for="(stat, index) in stats"
         :key="stat.label"
-        class="card text-center"
+        :class="['card text-center transition-all duration-500', statsVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5']"
+        :style="{ transitionDelay: statsVisible ? `${600 + index * 100}ms` : '0ms' }"
       >
         <div class="text-3xl sm:text-4xl font-bold text-primary-600 dark:text-primary-400 mb-2">
           {{ stat.value }}
